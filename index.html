@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apibay Torrent Search</title>
+    <title>The Pirate Bay (but without annoying ads)</title>
     <style>
         * {
             margin: 0;
@@ -13,244 +13,269 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            line-height: 1.6;
+            font-family: Verdana, Arial, sans-serif;
+            background: #2F4F4F;
+            color: #000;
+            line-height: 1.4;
+            font-size: 13px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            background: #fff;
+            min-height: 100vh;
         }
 
-        h1 {
+        .header {
+            background: #D2B48C;
+            padding: 15px 20px;
+            border-bottom: 3px solid #000;
+        }
+
+        .logo {
             text-align: center;
-            color: #ff6b35;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+            font-style: italic;
         }
 
         .search-section {
-            background: #2a2a2a;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background: #f0f0f0;
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
         }
 
         .search-form {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            text-align: center;
+            margin-bottom: 15px;
         }
 
         .search-input {
-            flex: 1;
-            min-width: 250px;
-            padding: 12px;
-            border: 2px solid #404040;
-            border-radius: 6px;
-            background: #333;
-            color: #e0e0e0;
-            font-size: 16px;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #ff6b35;
+            width: 400px;
+            max-width: 70%;
+            padding: 8px;
+            border: 2px solid #000;
+            font-size: 14px;
+            margin-right: 10px;
         }
 
         .category-select {
-            padding: 12px;
-            border: 2px solid #404040;
-            border-radius: 6px;
-            background: #333;
-            color: #e0e0e0;
-            font-size: 16px;
-            min-width: 150px;
+            padding: 8px;
+            border: 2px solid #000;
+            background: #fff;
+            margin-right: 10px;
+            font-size: 14px;
         }
 
         .search-btn {
-            padding: 12px 24px;
-            background: #ff6b35;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
+            padding: 8px 20px;
+            background: #D2B48C;
+            color: #fff;
+            border: 2px solid #000;
             font-weight: bold;
-            transition: background 0.3s;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .search-btn:hover {
-            background: #e55a2b;
+            background: #C8A882;
         }
 
         .search-btn:disabled {
-            background: #666;
+            background: #999;
             cursor: not-allowed;
+        }
+
+        .search-tips {
+            background: #ffffcc;
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .search-tips h3 {
+            color: #000;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .search-tips ul {
+            padding-left: 20px;
+        }
+
+        .search-tips li {
+            margin-bottom: 3px;
         }
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: #ff6b35;
-            font-size: 18px;
+            font-size: 16px;
+            color: #D2B48C;
+            font-weight: bold;
         }
 
         .results-section {
-            background: #2a2a2a;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background: #fff;
         }
 
         .results-header {
-            background: #ff6b35;
-            color: white;
-            padding: 15px 20px;
+            background: #D2B48C;
+            color: #fff;
+            padding: 10px 20px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 14px;
+            border-bottom: 2px solid #000;
         }
 
-        .torrent-item {
-            border-bottom: 1px solid #404040;
-            padding: 20px;
-            transition: background 0.3s;
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .torrent-item:hover {
-            background: #333;
+        .results-table th {
+            background: #f0f0f0;
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
         }
 
-        .torrent-item:last-child {
-            border-bottom: none;
+        .results-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-size: 12px;
+            vertical-align: top;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .results-table tr:hover {
+            background: #f5f5dc;
         }
 
         .torrent-name {
-            font-size: 18px;
             font-weight: bold;
-            color: #e0e0e0;
-            margin-bottom: 10px;
-            line-height: 1.4;
+            color: #8B7355;
+            margin-bottom: 3px;
         }
 
-        .torrent-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-            font-size: 14px;
+        .torrent-name a {
+            color: #8B7355;
+            text-decoration: none;
         }
 
-        .info-item {
-            display: flex;
-            flex-direction: column;
+        .torrent-name a:hover {
+            text-decoration: underline;
         }
 
-        .info-label {
-            color: #aaa;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            color: #e0e0e0;
-            font-weight: bold;
-            margin-top: 2px;
+        .torrent-details {
+            color: #666;
+            font-size: 11px;
         }
 
         .seeders {
-            color: #4CAF50;
+            color: #008000;
+            font-weight: bold;
         }
 
         .leechers {
-            color: #FF9800;
-        }
-
-        .size {
-            color: #2196F3;
-        }
-
-        .magnet-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
+            color: #ff6600;
             font-weight: bold;
-            transition: all 0.3s;
         }
 
-        .magnet-btn:hover {
-            background: #45a049;
-            transform: translateY(-1px);
+        .magnet-link {
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFYSURBVDiNpZM9SwNBEIafgwQSCxsLwcJCG1sLG1sLbSy0sdDGQhsLbSy0sdDGQhsLbSy0sdDGQhsLbSy0sdDGQhsLbSy0sdDGQhsLbSy0sVBICBYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYW') no-repeat;
+            background-size: 16px 16px;
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            cursor: pointer;
+            title: 'Magnet link';
         }
 
-        .magnet-btn:active {
-            transform: translateY(0);
+        .size-cell {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .seeds-cell,
+        .leech-cell {
+            text-align: center;
+            width: 40px;
         }
 
         .no-results {
             text-align: center;
             padding: 60px 20px;
-            color: #aaa;
-            font-size: 18px;
+            font-size: 16px;
+            color: #666;
         }
 
         .error {
-            background: #f44336;
-            color: white;
+            background: #ffcccc;
+            border: 2px solid #ff0000;
+            color: #cc0000;
             padding: 15px;
-            border-radius: 6px;
-            margin: 20px 0;
+            margin: 20px;
+            font-weight: bold;
         }
 
-        .search-tips {
-            margin-top: 20px;
+        .footer {
+            background: #D2B48C;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 3px solid #000;
         }
 
-        .search-tips h3 {
-            color: #ff6b35;
-            margin-bottom: 10px;
+        .footer a {
+            color: #fff;
+            text-decoration: underline;
         }
 
-        .search-tips ul {
-            color: #aaa;
-            padding-left: 20px;
-        }
-
-        .search-tips li {
-            margin-bottom: 5px;
+        .welcome-message {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 16px;
+            color: #666;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
+            .search-input {
+                width: 100%;
+                margin-bottom: 10px;
+                margin-right: 0;
             }
 
-            .search-form {
-                flex-direction: column;
-            }
-
-            .search-input,
             .category-select,
             .search-btn {
                 width: 100%;
+                margin-bottom: 10px;
+                margin-right: 0;
             }
 
-            .torrent-info {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
+            .results-table {
+                font-size: 11px;
             }
 
-            h1 {
-                font-size: 2em;
+            .results-table th,
+            .results-table td {
+                padding: 4px;
             }
         }
     </style>
@@ -258,14 +283,16 @@
 
 <body>
     <div class="container">
-        <h1>🏴‍☠️ Apibay Torrent Search</h1>
+        <div class="header">
+            <div class="logo">🏴‍☠️ The Pirate Bay</div>
+            <div class="tagline">(but without annoying ads)</div>
+        </div>
 
         <div class="search-section">
             <form class="search-form" id="searchForm">
-                <input type="text" id="searchInput" class="search-input"
-                    placeholder="Search torrents... (e.g., 'linux', 'user:username', 'category:101')" required>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search Torrents" required>
                 <select id="categorySelect" class="category-select">
-                    <option value="">All Categories</option>
+                    <option value="">All</option>
                     <option value="100">Audio</option>
                     <option value="101">Music</option>
                     <option value="102">Audio Books</option>
@@ -281,13 +308,13 @@
                     <option value="500">Porn</option>
                     <option value="600">Other</option>
                 </select>
-                <button type="submit" class="search-btn" id="searchBtn">Search</button>
+                <button type="submit" class="search-btn" id="searchBtn">Pirate Search</button>
             </form>
 
             <div class="search-tips">
-                <h3>Search Tips:</h3>
+                <h3>Search help:</h3>
                 <ul>
-                    <li><strong>Regular search:</strong> linux, movies, etc.</li>
+                    <li><strong>Regular search:</strong> linux, movies</li>
                     <li><strong>User search:</strong> user:username</li>
                     <li><strong>Category browse:</strong> category:101</li>
                     <li><strong>Top 100:</strong> top100:all or top100:201</li>
@@ -296,18 +323,40 @@
         </div>
 
         <div id="loadingDiv" class="loading" style="display: none;">
-            🔍 Searching torrents...
+            Searching the seven seas...
         </div>
 
         <div id="errorDiv" class="error" style="display: none;"></div>
 
+        <div id="welcomeDiv" class="welcome-message">
+            <h2>Welcome to The Pirate Bay</h2>
+            <p>Enter a search term above to start searching for torrents.</p>
+        </div>
+
         <div id="resultsDiv" style="display: none;">
             <div class="results-section">
                 <div class="results-header">
-                    <span id="resultsCount">0 results found</span>
+                    <span id="resultsCount">0 results</span>
                 </div>
-                <div id="resultsList"></div>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>SE</th>
+                            <th>LE</th>
+                            <th>Size</th>
+                            <th>ULed by</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsList">
+                    </tbody>
+                </table>
             </div>
+        </div>
+
+        <div class="footer">
+            <p>This site provides a cleaner interface to search torrents.</p>
+            <p>Download at your own risk and responsibility.</p>
         </div>
     </div>
 
@@ -318,22 +367,32 @@
         const searchBtn = document.getElementById('searchBtn');
         const loadingDiv = document.getElementById('loadingDiv');
         const errorDiv = document.getElementById('errorDiv');
+        const welcomeDiv = document.getElementById('welcomeDiv');
         const resultsDiv = document.getElementById('resultsDiv');
         const resultsCount = document.getElementById('resultsCount');
         const resultsList = document.getElementById('resultsList');
 
         // Format file size
         function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
+            if (bytes === 0) return '0 B';
             const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
         // Format date
         function formatDate(timestamp) {
-            return new Date(timestamp * 1000).toLocaleDateString();
+            const date = new Date(timestamp * 1000);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 1) return 'Today';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+            if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+            return `${Math.floor(diffDays / 365)} years ago`;
         }
 
         // Generate magnet link
@@ -370,45 +429,47 @@
             window.location.href = magnetLink;
         }
 
-        // Create torrent item HTML
-        function createTorrentItem(torrent) {
-            const div = document.createElement('div');
-            div.className = 'torrent-item';
+        // Create torrent row HTML
+        function createTorrentRow(torrent) {
+            const tr = document.createElement('tr');
 
-            div.innerHTML = `
-                <div class="torrent-name">${torrent.name}</div>
-                <div class="torrent-info">
-                    <div class="info-item">
-                        <span class="info-label">Seeders</span>
-                        <span class="info-value seeders">${torrent.seeders}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Leechers</span>
-                        <span class="info-value leechers">${torrent.leechers}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Size</span>
-                        <span class="info-value size">${formatBytes(torrent.size)}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Files</span>
-                        <span class="info-value">${torrent.num_files}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Uploader</span>
-                        <span class="info-value">${torrent.username}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Added</span>
-                        <span class="info-value">${formatDate(torrent.added)}</span>
-                    </div>
+            const nameCell = document.createElement('td');
+            nameCell.innerHTML = `
+                <div class="torrent-name">
+                    <a href="#" onclick="handleMagnetClick('${torrent.info_hash}', '${torrent.name.replace(/'/g, "\\'")}'); return false;">${torrent.name}</a>
                 </div>
-                <button class="magnet-btn" onclick="handleMagnetClick('${torrent.info_hash}', '${torrent.name.replace(/'/g, "\\'")}')">
-                    🧲 Get Magnet Link
-                </button>
+                <div class="torrent-details">
+                    Uploaded ${formatDate(torrent.added)}, Size ${formatBytes(torrent.size)}, Files ${torrent.num_files}
+                </div>
             `;
 
-            return div;
+            const seedsCell = document.createElement('td');
+            seedsCell.className = 'seeds-cell';
+            seedsCell.innerHTML = `<span class="seeders">${torrent.seeders}</span>`;
+
+            const leechCell = document.createElement('td');
+            leechCell.className = 'leech-cell';
+            leechCell.innerHTML = `<span class="leechers">${torrent.leechers}</span>`;
+
+            const sizeCell = document.createElement('td');
+            sizeCell.className = 'size-cell';
+            sizeCell.textContent = formatBytes(torrent.size);
+
+            const uploaderCell = document.createElement('td');
+            uploaderCell.innerHTML = `
+                ${torrent.username}<br>
+                <span onclick="handleMagnetClick('${torrent.info_hash}', '${torrent.name.replace(/'/g, "\\'")}'); return false;" 
+                      style="cursor: pointer; color: #8B7355; text-decoration: underline;" 
+                      title="Get magnet link">🧲</span>
+            `;
+
+            tr.appendChild(nameCell);
+            tr.appendChild(seedsCell);
+            tr.appendChild(leechCell);
+            tr.appendChild(sizeCell);
+            tr.appendChild(uploaderCell);
+
+            return tr;
         }
 
         // Show error message
@@ -420,11 +481,22 @@
             }, 5000);
         }
 
+        // Update URL with search parameters
+        function updateURL(query, category = '') {
+            const params = new URLSearchParams();
+            if (query) params.set('q', query);
+            if (category) params.set('cat', category);
+
+            const newURL = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+            window.history.pushState({}, '', newURL);
+        }
+
         // Search torrents
         async function searchTorrents(query, category = '') {
             try {
                 loadingDiv.style.display = 'block';
                 resultsDiv.style.display = 'none';
+                welcomeDiv.style.display = 'none';
                 errorDiv.style.display = 'none';
                 searchBtn.disabled = true;
 
@@ -441,10 +513,11 @@
 
                 const torrents = await response.json();
                 displayResults(torrents);
+                updateURL(query, category);
 
             } catch (error) {
                 console.error('Search error:', error);
-                showError('Failed to search torrents. Please try again.');
+                showError('Failed to search torrents. The seas are rough today, try again later.');
             } finally {
                 loadingDiv.style.display = 'none';
                 searchBtn.disabled = false;
@@ -456,13 +529,19 @@
             resultsList.innerHTML = '';
 
             if (torrents.length === 0) {
-                resultsList.innerHTML = '<div class="no-results">No torrents found. Try a different search term.</div>';
-                resultsCount.textContent = '0 results found';
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 5;
+                td.className = 'no-results';
+                td.textContent = 'No torrents found. Try different search terms.';
+                tr.appendChild(td);
+                resultsList.appendChild(tr);
+                resultsCount.textContent = '0 results';
             } else {
                 torrents.forEach(torrent => {
-                    resultsList.appendChild(createTorrentItem(torrent));
+                    resultsList.appendChild(createTorrentRow(torrent));
                 });
-                resultsCount.textContent = `${torrents.length} result${torrents.length !== 1 ? 's' : ''} found`;
+                resultsCount.textContent = `Displaying ${torrents.length} results`;
             }
 
             resultsDiv.style.display = 'block';
@@ -490,9 +569,22 @@
         // Make handleMagnetClick globally accessible
         window.handleMagnetClick = handleMagnetClick;
 
-        // Load popular torrents on page load
+        // Check for existing query parameters on page load
         window.addEventListener('load', () => {
-            searchTorrents('top100:all');
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            const category = urlParams.get('cat');
+
+            if (query) {
+                searchInput.value = query;
+                if (category) {
+                    categorySelect.value = category;
+                }
+                searchTorrents(query, category || '');
+            } else {
+                // Show welcome message if no query
+                welcomeDiv.style.display = 'block';
+            }
         });
     </script>
 </body>
