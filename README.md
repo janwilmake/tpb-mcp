@@ -1,0 +1,3 @@
+Imagine the whole BitTorrent protocol functionally working within tiny durable objects. Wouldn't that be something?
+
+There are many limitations to this, but a man can dream...

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Torrent Downloader</title>
+    <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #status {
+            margin-top: 20px;
+            color: green;
+        }
+
+        #error {
+            color: red;
+        }
+
+        #files {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Browser-Based Torrent Downloader</h1>
+    <p>Paste your magnet link below and click "Download" to start torrenting directly in the browser using WebTorrent.
+        Note: This requires seeders that support WebTorrent (WebRTC-based), and it may not work for all torrents. Large
+        files might consume a lot of memory/bandwidth.</p>
+
+    <input type="text" id="magnetInput" placeholder="Enter magnet link here"
+        style="width: 100%; padding: 10px; margin-bottom: 10px;">
+    <button onclick="startDownload()">Download Torrent</button>
+
+    <div id="status"></div>
+    <div id="error"></div>
+    <div id="files"></div>
+
+    <script>
+        function startDownload() {
+            const magnetURI = document.getElementById('magnetInput').value.trim();
+            if (!magnetURI) {
+                document.getElementById('error').innerText = 'Please enter a valid magnet link.';
+                return;
+            }
+
+            document.getElementById('status').innerText = 'Initializing WebTorrent client...';
+            document.getElementById('error').innerText = '';
+            document.getElementById('files').innerHTML = '';
+
+            const client = new WebTorrent();
+
+            client.add(magnetURI, (torrent) => {
+                document.getElementById('status').innerText = `Downloading: ${torrent.name} (Info Hash: ${torrent.infoHash})`;
+
+                torrent.on('download', (bytes) => {
+                    document.getElementById('status').innerText = `Progress: ${(torrent.progress * 100).toFixed(2)}% | Speed: ${Math.round(torrent.downloadSpeed / 1024)} KB/s`;
+                });
+
+                torrent.on('done', () => {
+                    document.getElementById('status').innerText = 'Download complete!';
+                });
+
+                torrent.files.forEach((file) => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.innerHTML = `<strong>${file.name}</strong> (${file.length} bytes) - <a href="#" onclick="downloadFile(this, '${file.name}')">Download</a>`;
+                    document.getElementById('files').appendChild(fileDiv);
+                });
+            });
+
+            client.on('error', (err) => {
+                document.getElementById('error').innerText = `Error: ${err.message}`;
+            });
+        }
+
+        function downloadFile(link, fileName) {
+            const torrent = WebTorrent().torrents[0]; // Assuming single torrent; adjust if multiple
+            const file = torrent.files.find(f => f.name === fileName);
+            if (file) {
+                file.getBlobURL((err, url) => {
+                    if (err) {
+                        alert(`Error downloading ${fileName}: ${err.message}`);
+                        return;
+                    }
+                    link.href = url;
+                    link.download = fileName;
+                    link.click();
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
