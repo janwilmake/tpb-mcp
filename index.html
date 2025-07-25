@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apibay Torrent Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff6b35;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .search-section {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border: 2px solid #404040;
+            border-radius: 6px;
+            background: #333;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .category-select {
+            padding: 12px;
+            border: 2px solid #404040;
+            border-radius: 6px;
+            background: #333;
+            color: #e0e0e0;
+            font-size: 16px;
+            min-width: 150px;
+        }
+
+        .search-btn {
+            padding: 12px 24px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #e55a2b;
+        }
+
+        .search-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b35;
+            font-size: 18px;
+        }
+
+        .results-section {
+            background: #2a2a2a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .results-header {
+            background: #ff6b35;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .torrent-item {
+            border-bottom: 1px solid #404040;
+            padding: 20px;
+            transition: background 0.3s;
+        }
+
+        .torrent-item:hover {
+            background: #333;
+        }
+
+        .torrent-item:last-child {
+            border-bottom: none;
+        }
+
+        .torrent-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .torrent-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #aaa;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #e0e0e0;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .seeders {
+            color: #4CAF50;
+        }
+
+        .leechers {
+            color: #FF9800;
+        }
+
+        .size {
+            color: #2196F3;
+        }
+
+        .magnet-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .magnet-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+
+        .magnet-btn:active {
+            transform: translateY(0);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        .error {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .search-tips {
+            margin-top: 20px;
+        }
+
+        .search-tips h3 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .search-tips ul {
+            color: #aaa;
+            padding-left: 20px;
+        }
+
+        .search-tips li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-input,
+            .category-select,
+            .search-btn {
+                width: 100%;
+            }
+
+            .torrent-info {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🏴‍☠️ Apibay Torrent Search</h1>
+
+        <div class="search-section">
+            <form class="search-form" id="searchForm">
+                <input type="text" id="searchInput" class="search-input"
+                    placeholder="Search torrents... (e.g., 'linux', 'user:username', 'category:101')" required>
+                <select id="categorySelect" class="category-select">
+                    <option value="">All Categories</option>
+                    <option value="100">Audio</option>
+                    <option value="101">Music</option>
+                    <option value="102">Audio Books</option>
+                    <option value="200">Video</option>
+                    <option value="201">Movies</option>
+                    <option value="202">TV Shows</option>
+                    <option value="300">Applications</option>
+                    <option value="301">Windows</option>
+                    <option value="302">Mac</option>
+                    <option value="400">Games</option>
+                    <option value="401">PC</option>
+                    <option value="402">Console</option>
+                    <option value="500">Porn</option>
+                    <option value="600">Other</option>
+                </select>
+                <button type="submit" class="search-btn" id="searchBtn">Search</button>
+            </form>
+
+            <div class="search-tips">
+                <h3>Search Tips:</h3>
+                <ul>
+                    <li><strong>Regular search:</strong> linux, movies, etc.</li>
+                    <li><strong>User search:</strong> user:username</li>
+                    <li><strong>Category browse:</strong> category:101</li>
+                    <li><strong>Top 100:</strong> top100:all or top100:201</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="loadingDiv" class="loading" style="display: none;">
+            🔍 Searching torrents...
+        </div>
+
+        <div id="errorDiv" class="error" style="display: none;"></div>
+
+        <div id="resultsDiv" style="display: none;">
+            <div class="results-section">
+                <div class="results-header">
+                    <span id="resultsCount">0 results found</span>
+                </div>
+                <div id="resultsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('categorySelect');
+        const searchBtn = document.getElementById('searchBtn');
+        const loadingDiv = document.getElementById('loadingDiv');
+        const errorDiv = document.getElementById('errorDiv');
+        const resultsDiv = document.getElementById('resultsDiv');
+        const resultsCount = document.getElementById('resultsCount');
+        const resultsList = document.getElementById('resultsList');
+
+        // Format file size
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Format date
+        function formatDate(timestamp) {
+            return new Date(timestamp * 1000).toLocaleDateString();
+        }
+
+        // Generate magnet link
+        function generateMagnetLink(infoHash, name) {
+            const trackers = [
+                'udp://tracker.coppersurfer.tk:6969/announce',
+                'udp://9.rarbg.to:2920/announce',
+                'udp://tracker.opentrackr.org:1337',
+                'udp://tracker.internetwarriors.net:1337/announce',
+                'udp://tracker.leechers-paradise.org:6969/announce',
+                'udp://exodus.desync.com:6969/announce',
+                'udp://explodie.org:6969/announce',
+                'udp://tracker.tiny-vps.com:6969/announce'
+            ];
+
+            const trackerParams = trackers.map(t => `tr=${encodeURIComponent(t)}`).join('&');
+            return `magnet:?xt=urn:btih:${infoHash}&dn=${encodeURIComponent(name)}&${trackerParams}`;
+        }
+
+        // Copy magnet link and open it
+        function handleMagnetClick(infoHash, name) {
+            const magnetLink = generateMagnetLink(infoHash, name);
+
+            // Try to copy to clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(magnetLink).then(() => {
+                    console.log('Magnet link copied to clipboard');
+                }).catch(err => {
+                    console.error('Failed to copy magnet link:', err);
+                });
+            }
+
+            // Open magnet link
+            window.location.href = magnetLink;
+        }
+
+        // Create torrent item HTML
+        function createTorrentItem(torrent) {
+            const div = document.createElement('div');
+            div.className = 'torrent-item';
+
+            div.innerHTML = `
+                <div class="torrent-name">${torrent.name}</div>
+                <div class="torrent-info">
+                    <div class="info-item">
+                        <span class="info-label">Seeders</span>
+                        <span class="info-value seeders">${torrent.seeders}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Leechers</span>
+                        <span class="info-value leechers">${torrent.leechers}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Size</span>
+                        <span class="info-value size">${formatBytes(torrent.size)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Files</span>
+                        <span class="info-value">${torrent.num_files}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Uploader</span>
+                        <span class="info-value">${torrent.username}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Added</span>
+                        <span class="info-value">${formatDate(torrent.added)}</span>
+                    </div>
+                </div>
+                <button class="magnet-btn" onclick="handleMagnetClick('${torrent.info_hash}', '${torrent.name.replace(/'/g, "\\'")}')">
+                    🧲 Get Magnet Link
+                </button>
+            `;
+
+            return div;
+        }
+
+        // Show error message
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Search torrents
+        async function searchTorrents(query, category = '') {
+            try {
+                loadingDiv.style.display = 'block';
+                resultsDiv.style.display = 'none';
+                errorDiv.style.display = 'none';
+                searchBtn.disabled = true;
+
+                const params = new URLSearchParams({ q: query });
+                if (category) {
+                    params.append('cat', category);
+                }
+
+                const response = await fetch(`/q.php?${params}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const torrents = await response.json();
+                displayResults(torrents);
+
+            } catch (error) {
+                console.error('Search error:', error);
+                showError('Failed to search torrents. Please try again.');
+            } finally {
+                loadingDiv.style.display = 'none';
+                searchBtn.disabled = false;
+            }
+        }
+
+        // Display search results
+        function displayResults(torrents) {
+            resultsList.innerHTML = '';
+
+            if (torrents.length === 0) {
+                resultsList.innerHTML = '<div class="no-results">No torrents found. Try a different search term.</div>';
+                resultsCount.textContent = '0 results found';
+            } else {
+                torrents.forEach(torrent => {
+                    resultsList.appendChild(createTorrentItem(torrent));
+                });
+                resultsCount.textContent = `${torrents.length} result${torrents.length !== 1 ? 's' : ''} found`;
+            }
+
+            resultsDiv.style.display = 'block';
+        }
+
+        // Handle form submission
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            const category = categorySelect.value;
+
+            if (query) {
+                searchTorrents(query, category);
+            }
+        });
+
+        // Handle enter key in search input
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Make handleMagnetClick globally accessible
+        window.handleMagnetClick = handleMagnetClick;
+
+        // Load popular torrents on page load
+        window.addEventListener('load', () => {
+            searchTorrents('top100:all');
+        });
+    </script>
+</body>
+
+</html>

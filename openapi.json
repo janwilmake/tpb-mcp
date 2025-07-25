@@ -1,0 +1,342 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Apibay API",
+    "description": "The Pirate Bay API for searching and retrieving torrent information",
+    "version": "1.0.0",
+    "contact": {
+      "url": "https://apibay.org"
+    }
+  },
+  "servers": [
+    { "url": "https://apibay.org", "description": "Production server" }
+  ],
+  "paths": {
+    "/q.php": {
+      "get": {
+        "operationId": "searchTorrents",
+        "summary": "Search torrents",
+        "description": "Search for torrents by query string and optionally filter by category",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Search query. Can be regular search terms, or special queries like 'user:{username}', 'category:{cat_id}', 'top100:{category}'",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "regular_search": {
+                "value": "linux",
+                "description": "Regular search for 'linux'"
+              },
+              "user_search": {
+                "value": "user:username",
+                "description": "Search torrents by specific user"
+              },
+              "category_search": {
+                "value": "category:101",
+                "description": "Browse torrents in category 101 (Music)"
+              }
+            }
+          },
+          {
+            "name": "cat",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of category IDs to filter by",
+            "schema": {
+              "type": "string"
+            },
+            "example": "100,200,300"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of torrent objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Torrent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/t.php": {
+      "get": {
+        "summary": "Get torrent details",
+        "description": "Get detailed information about a specific torrent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "Torrent ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Torrent details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TorrentDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/f.php": {
+      "get": {
+        "summary": "Get torrent file list",
+        "description": "Get the list of files contained in a torrent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "Torrent ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of files in the torrent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TorrentFile"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/precompiled/data_top100_{category}.json": {
+      "get": {
+        "summary": "Get top 100 torrents by category",
+        "description": "Get precompiled top 100 torrents for a specific category",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "description": "Category identifier (e.g., 'all', '101', '201', etc.)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of top torrents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Torrent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/precompiled/data_top100_recent.json": {
+      "get": {
+        "summary": "Get recent torrents",
+        "description": "Get recently uploaded torrents",
+        "responses": {
+          "200": {
+            "description": "Array of recent torrents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Torrent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Torrent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique torrent identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Torrent name/title"
+          },
+          "info_hash": {
+            "type": "string",
+            "description": "SHA-1 hash of the torrent info dictionary"
+          },
+          "leechers": {
+            "type": "integer",
+            "description": "Number of peers downloading"
+          },
+          "seeders": {
+            "type": "integer",
+            "description": "Number of peers seeding"
+          },
+          "num_files": {
+            "type": "integer",
+            "description": "Number of files in torrent"
+          },
+          "size": {
+            "type": "integer",
+            "description": "Total size in bytes"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of uploader"
+          },
+          "added": {
+            "type": "integer",
+            "description": "Unix timestamp when torrent was added"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "",
+              "trusted",
+              "vip",
+              "helper",
+              "moderator",
+              "supermod",
+              "admin"
+            ],
+            "description": "User status/reputation"
+          },
+          "category": {
+            "type": "integer",
+            "description": "Category ID"
+          },
+          "imdb": {
+            "type": "string",
+            "description": "IMDB ID if applicable"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "info_hash",
+          "leechers",
+          "seeders",
+          "size",
+          "username",
+          "added",
+          "category"
+        ]
+      },
+      "TorrentDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Torrent"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "descr": {
+                "type": "string",
+                "description": "Torrent description/details"
+              }
+            }
+          }
+        ]
+      },
+      "TorrentFile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "File name (wrapped in array)"
+          },
+          "size": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "File size in bytes (wrapped in array)"
+          }
+        },
+        "required": ["name", "size"]
+      },
+      "CategoryInfo": {
+        "type": "object",
+        "description": "Category mapping for reference",
+        "properties": {
+          "100": {
+            "type": "string",
+            "example": "Audio"
+          },
+          "101": {
+            "type": "string",
+            "example": "Music"
+          },
+          "102": {
+            "type": "string",
+            "example": "Audio Books"
+          },
+          "200": {
+            "type": "string",
+            "example": "Video"
+          },
+          "201": {
+            "type": "string",
+            "example": "Movies"
+          },
+          "300": {
+            "type": "string",
+            "example": "Applications"
+          },
+          "400": {
+            "type": "string",
+            "example": "Games"
+          },
+          "500": {
+            "type": "string",
+            "example": "Porn"
+          },
+          "600": {
+            "type": "string",
+            "example": "Other"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+
+  "name": "tpb-mcp",
+  "main": "main.js",
+  "compatibility_date": "2025-06-05",
+  "assets": { "directory": "./" },
+  "dev": { "port": 3000 },
+  "routes": [{ "pattern": "tpbmcp.gptideas.com", "custom_domain": true }]
+}
